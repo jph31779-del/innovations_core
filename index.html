@@ -2,432 +2,250 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>IFH | COMMAND_CORE</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Innovations From The Hart | Defense-Grade Inspection Services</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .hero-bg {
+      background-color: #1e293b; /* Slate 800 */
+      background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+    .clip-slope {
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+  </style>
+
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            vanta: '#050505',       /* Deepest Black */
-            panel: '#0F0F0F',       /* Slightly Lighter Black */
-            nickel: '#A1A1AA',      /* Metallic Text */
-            alert: '#ef4444',       /* Red Status */
-            success: '#10b981',     /* Green Status */
-            hud: '#3b82f6',         /* Blue UI Accents */
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            brand: {
+              blue: '#0f172a',   /* Slate 900 - Corporate Deep Blue */
+              accent: '#3b82f6', /* Blue 500 - Tech Highlight */
+              light: '#f8fafc',  /* Slate 50 - Background */
+            }
           }
         }
       }
     }
   </script>
-
-  <style>
-    body { font-family: "Inter", sans-serif; background-color: var(--vanta); color: var(--nickel); }
-    
-    /* Tactical Inputs */
-    input, textarea { 
-        background-color: #000; 
-        border: 1px solid #333; 
-        color: #fff; 
-        font-family: "JetBrains Mono", monospace;
-        transition: all 0.2s; 
-    }
-    input:focus, textarea:focus { outline: none; border-color: #3b82f6; }
-    
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #000; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #555; }
-  </style>
 </head>
+<body class="bg-brand-light text-slate-800 antialiased">
 
-<body class="bg-vanta text-nickel min-h-screen">
-
-  <nav class="bg-vanta border-b border-zinc-800 sticky top-0 z-50">
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center gap-3">
-          <div class="w-3 h-3 bg-hud rounded-full animate-pulse"></div> <span class="text-lg font-bold text-gray-100 tracking-wider font-mono">
-            INNOVATIONS_CORE
-          </span>
-          <span class="px-2 py-0.5 border border-zinc-700 text-zinc-400 text-[10px] font-mono uppercase tracking-widest">
-            Restricted
-          </span>
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center gap-2">
+          <div class="bg-brand-blue text-white p-2 rounded-lg">
+            <i data-lucide="building-2" class="w-6 h-6"></i>
+          </div>
+          <div class="leading-tight">
+            <span class="block text-lg font-bold text-slate-900 tracking-tight">INNOVATIONS</span>
+            <span class="block text-xs font-semibold text-slate-500 tracking-widest uppercase">From The Hart LLC</span>
+          </div>
         </div>
-        <div>
-          <button id="btnExport"
-            class="group bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-gray-300 px-4 py-2 text-xs font-mono uppercase tracking-wide transition">
-            <span class="text-hud group-hover:text-white mr-2">⇩</span>Export JSON
-          </button>
+
+        <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+          <a href="#services" class="hover:text-brand-accent transition">Services</a>
+          <a href="#govcon" class="hover:text-brand-accent transition">Government</a>
+          <a href="#tech" class="hover:text-brand-accent transition">Technology</a>
+          <a href="#contact" class="px-5 py-2.5 bg-brand-accent text-white rounded-full hover:bg-blue-600 transition shadow-lg shadow-blue-500/20">
+            Request Proposal
+          </a>
         </div>
       </div>
     </div>
   </nav>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <header class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-800 pb-6">
-      <div>
-        <h1 class="text-2xl font-bold text-white tracking-tight">OPERATIONAL STATUS</h1>
-        <div class="mt-2 flex items-center gap-4 text-sm font-mono text-zinc-500">
-           <span id="asOf">DATE: —</span>
-           <span id="savedBadge" class="text-zinc-600">SYNC: —</span>
+  <header class="hero-bg text-white h-[600px] flex items-center relative clip-slope">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div class="max-w-3xl space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/50 border border-blue-700 text-blue-300 text-xs font-bold uppercase tracking-wider">
+          <span class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+          Operational & Ready
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+          Precision Inspection.<br>
+          <span class="text-brand-accent">Defense-Grade Data.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl">
+          We provide advanced construction inspection and government contracting solutions using autonomous aerial systems and real-time reporting.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+          <a href="#contact" class="inline-flex justify-center items-center px-8 py-4 bg-white text-slate-900 font-bold rounded-lg hover:bg-slate-100 transition">
+            Schedule Inspection
+          </a>
+          <a href="#services" class="inline-flex justify-center items-center px-8 py-4 border border-slate-500 text-white font-semibold rounded-lg hover:bg-slate-800/50 transition backdrop-blur-sm">
+            Explore Capabilities
+          </a>
         </div>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 font-mono">
-      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-hud">
-        <p class="text-xs text-zinc-500 uppercase tracking-widest">Target (Phase 1)</p>
-        <p id="kpiTarget" class="text-xl font-bold mt-2 text-white">—</p>
+  <section id="services" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-sm font-bold text-brand-accent uppercase tracking-widest mb-2">Our Capabilities</h2>
+        <h3 class="text-3xl font-bold text-slate-900">Comprehensive Field Services</h3>
+        <p class="mt-4 text-slate-600 max-w-2xl mx-auto">
+          Replacing outdated manual methods with digital precision. We serve commercial developers, residential builders, and government agencies.
+        </p>
       </div>
 
-      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-success">
-        <p class="text-xs text-zinc-500 uppercase tracking-widest">Capital Raised</p>
-        <p id="kpiRaised" class="text-xl font-bold mt-2 text-white">—</p>
-        <p id="kpiRaisedNote" class="text-[10px] mt-1 text-zinc-500">—</p>
-      </div>
-
-      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-purple-600">
-        <p class="text-xs text-zinc-500 uppercase tracking-widest">Est. Runway</p>
-        <p id="kpiRunway" class="text-xl font-bold mt-2 text-white">—</p>
-        <p id="kpiRunwayNote" class="text-[10px] mt-1 text-zinc-500"></p>
-      </div>
-
-      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-zinc-500">
-        <p class="text-xs text-zinc-500 uppercase tracking-widest">Current Phase</p>
-        <p id="kpiPhase" class="text-xl font-bold mt-2 text-white truncate">—</p>
-      </div>
-    </section>
-
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-
-      <div class="bg-panel border border-zinc-800 lg:col-span-1">
-        <div class="p-4 border-b border-zinc-800 flex justify-between items-center">
-            <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wider">Asset/Ops State</h2>
-            <span id="badgeConfirmed" class="text-[10px] font-mono px-2 py-1 bg-zinc-900 border border-zinc-700 text-zinc-400">—</span>
-        </div>
-        
-        <div class="p-6 space-y-6">
-          <div>
-            <p class="text-[10px] font-mono text-hud uppercase tracking-widest mb-1">Ops Status</p>
-            <p id="opsStatus" class="text-sm font-semibold text-gray-300">—</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="group p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-accent/50 hover:shadow-xl hover:shadow-blue-500/10 transition relative overflow-hidden">
+          <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i data-lucide="hard-hat" class="w-6 h-6"></i>
           </div>
+          <h4 class="text-xl font-bold text-slate-900 mb-3">Construction Inspection</h4>
+          <p class="text-slate-600 text-sm leading-relaxed mb-6">
+            Pre-drywall, phase inspections, and final walkthroughs. We ensure code compliance and structural integrity with photographic evidence.
+          </p>
+          <ul class="space-y-2 text-sm text-slate-500 font-medium">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Phase 1 & 2 Reporting</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Site Monitoring</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Safety Compliance</li>
+          </ul>
+        </div>
 
-          <div>
-            <p class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2">Deployed Assets</p>
-            <ul id="assetsList" class="space-y-1 text-sm text-gray-400 font-mono"></ul>
+        <div class="group p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-accent/50 hover:shadow-xl hover:shadow-blue-500/10 transition">
+          <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i data-lucide="plane" class="w-6 h-6"></i>
           </div>
-          
-          <div>
-             <p class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2">Pending Milestones</p>
-             <ol id="milestoneList" class="space-y-2 text-sm text-gray-400 font-mono list-decimal list-inside accent-hud"></ol>
+          <h4 class="text-xl font-bold text-slate-900 mb-3">Aerial Data (UAV)</h4>
+          <p class="text-slate-600 text-sm leading-relaxed mb-6">
+            FAA Part 107 certified drone operations for high-resolution orthomosaics, thermal imaging, and hard-to-reach structural analysis.
+          </p>
+          <ul class="space-y-2 text-sm text-slate-500 font-medium">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> 4K Aerial Progression</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Thermal Heat Loss</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Roof Inspection</li>
+          </ul>
+        </div>
+
+        <div class="group p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-accent/50 hover:shadow-xl hover:shadow-blue-500/10 transition">
+          <div class="w-12 h-12 bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i data-lucide="briefcase" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-xl font-bold text-slate-900 mb-3">Government Contracting</h4>
+          <p class="text-slate-600 text-sm leading-relaxed mb-6">
+            Specialized consulting and prime/sub-contracting services for federal and state agencies. Compliant, reliable, and secure.
+          </p>
+          <ul class="space-y-2 text-sm text-slate-500 font-medium">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> SAM.gov Registered</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Capability Statements</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Risk Mitigation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="govcon" class="py-16 bg-brand-blue text-white relative overflow-hidden">
+    <div class="absolute top-0 right-0 p-12 opacity-10">
+      <i data-lucide="shield-check" class="w-64 h-64"></i>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+      <div class="md:w-1/2">
+        <h2 class="text-3xl font-bold mb-4">Trusted by the Public Sector.</h2>
+        <p class="text-slate-300 text-lg mb-8">
+          We understand the rigor of government compliance. Innovations From The Hart LLC delivers mission-critical data and inspection services with zero overhead and maximum reliability.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <span class="px-4 py-2 bg-slate-800 rounded border border-slate-700 text-sm font-mono text-slate-400">UEI: PENDING</span>
+          <span class="px-4 py-2 bg-slate-800 rounded border border-slate-700 text-sm font-mono text-slate-400">CAGE: PENDING</span>
+        </div>
+      </div>
+      <div class="md:w-1/2 bg-white/5 p-8 rounded-2xl border border-white/10 backdrop-blur-sm">
+        <h3 class="text-xl font-semibold mb-4 text-brand-accent">NAICS Codes</h3>
+        <div class="grid grid-cols-1 gap-3">
+          <div class="flex justify-between items-center border-b border-white/10 pb-2">
+            <span class="text-slate-300">541350</span>
+            <span class="text-sm font-medium">Building Inspection Services</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-white/10 pb-2">
+            <span class="text-slate-300">541922</span>
+            <span class="text-sm font-medium">Aerial Photography (Drone)</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-white/10 pb-2">
+            <span class="text-slate-300">541611</span>
+            <span class="text-sm font-medium">General Management Consulting</span>
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="bg-panel border border-zinc-800 lg:col-span-1 flex flex-col">
-        <div class="p-4 border-b border-zinc-800">
-            <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wider">Gap Analysis</h2>
-        </div>
-        
-        <div class="relative flex-grow flex items-center justify-center p-6">
-          <canvas id="fundingChart" style="max-height: 220px;"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-xs font-mono text-zinc-600 mt-20">CAPITAL</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-panel border border-zinc-800 lg:col-span-1">
-        <div class="p-4 border-b border-zinc-800 flex items-center gap-2">
-            <div class="w-2 h-2 bg-hud rounded-sm"></div>
-            <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wider">Revenue Sim</h2>
-        </div>
-        
-        <div class="p-6 space-y-5">
-            <p class="text-xs text-zinc-500">Bootstrap Parameter Calculator</p>
-            
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-mono text-zinc-500 mb-1 uppercase">Day Rate ($)</label>
-                    <input type="number" id="calcRate" value="1200" class="w-full p-2 text-sm bg-black border border-zinc-700 focus:border-hud text-right">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-mono text-zinc-500 mb-1 uppercase">Jobs/Mo</label>
-                    <input type="number" id="calcJobs" value="4" class="w-full p-2 text-sm bg-black border border-zinc-700 focus:border-hud text-right">
-                </div>
+  <section id="contact" class="py-20 bg-slate-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold text-slate-900 mb-6">Ready to Mobilize?</h2>
+      <p class="text-slate-600 mb-10 text-lg">
+        Whether you need a Phase 1 inspection or a government teaming partner, we are ready to deploy assets to your site.
+      </p>
+      <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 text-left">
+        <form class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Name</label>
+              <input type="text" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-accent focus:border-brand-accent transition" placeholder="First Last">
             </div>
-            
-            <div class="pt-4 border-t border-zinc-800 space-y-2">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-zinc-400 font-mono">GROSS REV:</span>
-                    <span id="calcMonthly" class="text-sm font-bold text-success font-mono">$0</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-zinc-400 font-mono">TARGET MET IN:</span>
-                    <span id="calcTime" class="text-sm font-bold text-hud font-mono">0 MO</span>
-                </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+              <input type="email" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-accent focus:border-brand-accent transition" placeholder="name@company.com">
             </div>
-        </div>
-      </div>
-
-    </section>
-
-    <section class="bg-panel border border-zinc-800 p-0 overflow-hidden">
-      <div class="bg-zinc-900 px-4 py-2 border-b border-zinc-800 flex justify-between items-center">
-          <h2 class="text-xs font-bold text-gray-400 font-mono uppercase">System_State.json</h2>
-          <span class="text-[10px] text-zinc-600 font-mono">RW_ACCESS_GRANTED</span>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-6">
-        <div class="lg:col-span-4 border-r border-zinc-800">
-          <textarea id="stateEditor"
-            class="w-full h-64 font-mono text-xs p-4 bg-vanta text-green-500 border-none resize-none focus:ring-0"></textarea>
-        </div>
-        <div class="lg:col-span-2 p-6 flex flex-col gap-3 justify-center bg-panel">
-          <button id="btnApply"
-            class="w-full bg-hud hover:bg-blue-600 text-black px-4 py-3 text-xs font-bold font-mono uppercase tracking-widest shadow-lg shadow-blue-900/20 transition">
-            [ EXECUTE UPDATE ]
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Project Type</label>
+            <select class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-accent focus:border-brand-accent transition">
+              <option>Construction Inspection</option>
+              <option>Drone / Aerial Data</option>
+              <option>Government Contracting</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Message</label>
+            <textarea rows="4" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-accent focus:border-brand-accent transition" placeholder="Describe your project needs..."></textarea>
+          </div>
+          <button type="button" class="w-full bg-brand-accent text-white font-bold py-4 rounded-lg hover:bg-blue-600 transition shadow-lg shadow-blue-500/20">
+            Send Request
           </button>
-          <button id="btnReset"
-            class="w-full bg-transparent hover:bg-red-900/20 text-zinc-500 hover:text-red-400 border border-zinc-700 hover:border-red-800 px-4 py-3 text-xs font-mono uppercase tracking-widest transition">
-            [ FACTORY RESET ]
-          </button>
-          <div id="errBox"
-            class="hidden p-2 mt-2 border border-red-900 bg-red-900/10 text-red-500 text-[10px] font-mono"></div>
-        </div>
+        </form>
       </div>
-    </section>
+    </div>
+  </section>
 
-  </main>
+  <footer class="bg-white border-t border-slate-200 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="text-left">
+        <span class="block text-lg font-bold text-slate-900">INNOVATIONS FROM THE HART LLC</span>
+        <span class="text-slate-500 text-sm">Veteran-Owned Small Business (VOSB) Pending</span>
+      </div>
+      <div class="flex gap-6 text-sm text-slate-500">
+        <a href="#" class="hover:text-slate-900">Privacy Policy</a>
+        <a href="#" class="hover:text-slate-900">Terms of Service</a>
+        <a href="mailto:contact@innovationsfromthehart.com" class="hover:text-slate-900">Contact Support</a>
+      </div>
+      <div class="text-slate-400 text-sm">
+        &copy; 2026 Innovations From The Hart LLC.
+      </div>
+    </div>
+  </footer>
 
   <script>
-    const STORAGE_KEY = "ifh_mission_control_state_v2";
-
-    const DEFAULT_STATE = {
-      version: "v2",
-      as_of: new Date().toISOString().slice(0, 10),
-      phase: "Pre-Seed / Setup",
-      funding_target: 60000,
-      capital_raised: 0,
-      capital_confirmed: false,
-      runway_months: null,
-      assets_owned: ["Nikon Z7"],
-      operations_status: "Pre-revenue",
-      next_milestones: [
-        "Launch website",
-        "Complete Part 107",
-        "Acquire first drone",
-        "Secure insurance"
-      ]
-    };
-
-    const fmtUSD = (n) => {
-      if (typeof n !== "number" || !Number.isFinite(n)) return "—";
-      return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-    };
-
-    function normalizeState(raw) {
-      const s = (raw && typeof raw === "object") ? raw : {};
-      return {
-        version: s.version || "v2",
-        as_of: s.as_of || "",
-        phase: s.phase || "—",
-        funding_target: Number(s.funding_target) || 0,
-        capital_raised: Number(s.capital_raised) || 0,
-        capital_confirmed: s.capital_confirmed === true,
-        runway_months: s.runway_months,
-        assets_owned: Array.isArray(s.assets_owned) ? s.assets_owned : [],
-        operations_status: s.operations_status || "—",
-        next_milestones: Array.isArray(s.next_milestones) ? s.next_milestones : []
-      };
-    }
-
-    function saveState(state) {
-      const normalized = normalizeState(state);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-      setSavedBadge(true);
-      return normalized;
-    }
-
-    function loadSavedState() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      try { return normalizeState(JSON.parse(raw)); }
-      catch { return null; }
-    }
-
-    function setSavedBadge(isSaved) {
-      const b = document.getElementById("savedBadge");
-      if (isSaved) {
-        b.textContent = "SYNC: OK";
-        b.className = "text-emerald-500 font-mono";
-      } else {
-        b.textContent = "SYNC: PENDING";
-        b.className = "text-zinc-600 font-mono";
-      }
-    }
-
-    let fundingChartInstance = null;
-
-    function render(state) {
-      state = normalizeState(state);
-
-      document.getElementById("asOf").textContent = state.as_of ? `DATE: ${state.as_of}` : "DATE: —";
-      document.getElementById("kpiTarget").textContent = fmtUSD(state.funding_target);
-      document.getElementById("kpiRaised").textContent = fmtUSD(state.capital_raised);
-      document.getElementById("kpiPhase").textContent = state.phase;
-      document.getElementById("opsStatus").textContent = state.operations_status;
-      
-      const raisedNote = document.getElementById("kpiRaisedNote");
-      if (!state.capital_confirmed && state.capital_raised === 0) {
-        raisedNote.textContent = "PENDING CONFIRMATION";
-        raisedNote.className = "text-[10px] mt-1 text-zinc-600";
-      } else if (state.capital_confirmed) {
-        const pct = Math.round((state.capital_raised / state.funding_target) * 100);
-        raisedNote.textContent = `${pct}% ACQUIRED`;
-        raisedNote.className = "text-[10px] mt-1 text-success font-bold";
-      }
-
-      const runwayEl = document.getElementById("kpiRunway");
-      const runwayNoteEl = document.getElementById("kpiRunwayNote");
-      if (state.runway_months !== null && state.runway_months !== undefined) {
-         runwayEl.textContent = state.runway_months;
-         runwayNoteEl.textContent = "MONTHS REMAINING";
-      } else {
-         runwayEl.textContent = "—";
-         runwayNoteEl.textContent = "AWAITING CAPITAL";
-      }
-
-      const badge = document.getElementById("badgeConfirmed");
-      if (state.capital_confirmed) {
-        badge.textContent = "CAPITAL SECURED";
-        badge.className = "text-[10px] font-mono px-2 py-1 bg-green-900/30 border border-green-800 text-green-400";
-      } else {
-        badge.textContent = "UNCONFIRMED";
-        badge.className = "text-[10px] font-mono px-2 py-1 bg-yellow-900/20 border border-yellow-800 text-yellow-600";
-      }
-
-      const assetsList = document.getElementById("assetsList");
-      assetsList.innerHTML = state.assets_owned.map(a => `<li>> ${a}</li>`).join("");
-      
-      const milestoneList = document.getElementById("milestoneList");
-      milestoneList.innerHTML = state.next_milestones.map(m => `<li>${m}</li>`).join("");
-
-      renderChart(state);
-    }
-
-    function renderChart(state) {
-      const ctx = document.getElementById("fundingChart").getContext("2d");
-      const remaining = Math.max(0, state.funding_target - state.capital_raised);
-      
-      // DARK MODE CHART COLORS
-      const data = {
-        labels: ["Raised", "Needed"],
-        datasets: [{
-          data: [state.capital_raised, remaining],
-          backgroundColor: ["#10b981", "#1f2937"], // Success Green vs Zinc-800
-          borderColor: ["#050505", "#050505"], 
-          borderWidth: 2,
-          hoverOffset: 4
-        }]
-      };
-
-      if (fundingChartInstance) {
-        fundingChartInstance.data = data;
-        fundingChartInstance.update();
-      } else {
-        fundingChartInstance = new Chart(ctx, {
-          type: "doughnut",
-          data: data,
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '80%', 
-            plugins: {
-              legend: { display: false } 
-            }
-          }
-        });
-      }
-    }
-
-    function updateCalculator(targetAmount) {
-        const rate = parseFloat(document.getElementById("calcRate").value) || 0;
-        const jobs = parseFloat(document.getElementById("calcJobs").value) || 0;
-        
-        const monthly = rate * jobs;
-        document.getElementById("calcMonthly").textContent = fmtUSD(monthly);
-        
-        const timeEl = document.getElementById("calcTime");
-        if (monthly > 0) {
-            const months = (targetAmount / monthly).toFixed(1);
-            timeEl.textContent = `${months} MO`;
-        } else {
-            timeEl.textContent = "∞";
-        }
-    }
-
-    const editor = document.getElementById("stateEditor");
-    const errBox = document.getElementById("errBox");
-
-    let currentState = loadSavedState() || normalizeState(DEFAULT_STATE);
-    editor.value = JSON.stringify(currentState, null, 2);
-    render(currentState);
-    updateCalculator(currentState.funding_target);
-
-    document.getElementById("btnApply").addEventListener("click", () => {
-      try {
-        const parsed = JSON.parse(editor.value);
-        currentState = saveState(parsed);
-        editor.value = JSON.stringify(currentState, null, 2);
-        render(currentState);
-        updateCalculator(currentState.funding_target);
-        errBox.classList.add("hidden");
-      } catch (e) {
-        errBox.textContent = "SYNTAX_ERR: " + e.message;
-        errBox.classList.remove("hidden");
-      }
-    });
-
-    document.getElementById("btnReset").addEventListener("click", () => {
-      localStorage.removeItem(STORAGE_KEY);
-      setSavedBadge(false);
-      currentState = normalizeState(DEFAULT_STATE);
-      editor.value = JSON.stringify(currentState, null, 2);
-      render(currentState);
-      updateCalculator(currentState.funding_target);
-    });
-
-    ['calcRate', 'calcJobs'].forEach(id => {
-        document.getElementById(id).addEventListener('input', () => {
-            updateCalculator(currentState.funding_target);
-        });
-    });
-
-    document.getElementById("btnExport").addEventListener("click", () => {
-        const blob = new Blob([editor.value], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `IFH_CORE_${new Date().toISOString().slice(0,10)}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    });
-
+    lucide.createIcons();
   </script>
 </body>
 </html>
