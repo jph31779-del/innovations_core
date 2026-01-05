@@ -1,12 +1,433 @@
-<header class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-800 pb-6">
-  <div>
-    <h1 class="text-2xl font-bold text-white tracking-tight">OPERATIONAL STATUS</h1>
-    <div class="mt-2 flex items-center gap-4 text-sm font-mono text-zinc-500">
-       <span id="asOf">DATE: —</span>
-       <span id="savedBadge" class="text-zinc-600">SYNC: —</span>
-    </div>
-  </div>
-</header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>IFH | COMMAND_CORE</title>
 
-<section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 font-mono">
-  <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vanta: '#050505',       /* Deepest Black */
+            panel: '#0F0F0F',       /* Slightly Lighter Black */
+            nickel: '#A1A1AA',      /* Metallic Text */
+            alert: '#ef4444',       /* Red Status */
+            success: '#10b981',     /* Green Status */
+            hud: '#3b82f6',         /* Blue UI Accents */
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: "Inter", sans-serif; background-color: var(--vanta); color: var(--nickel); }
+    
+    /* Tactical Inputs */
+    input, textarea { 
+        background-color: #000; 
+        border: 1px solid #333; 
+        color: #fff; 
+        font-family: "JetBrains Mono", monospace;
+        transition: all 0.2s; 
+    }
+    input:focus, textarea:focus { outline: none; border-color: #3b82f6; }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+  </style>
+</head>
+
+<body class="bg-vanta text-nickel min-h-screen">
+
+  <nav class="bg-vanta border-b border-zinc-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-3 h-3 bg-hud rounded-full animate-pulse"></div> <span class="text-lg font-bold text-gray-100 tracking-wider font-mono">
+            INNOVATIONS_CORE
+          </span>
+          <span class="px-2 py-0.5 border border-zinc-700 text-zinc-400 text-[10px] font-mono uppercase tracking-widest">
+            Restricted
+          </span>
+        </div>
+        <div>
+          <button id="btnExport"
+            class="group bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-gray-300 px-4 py-2 text-xs font-mono uppercase tracking-wide transition">
+            <span class="text-hud group-hover:text-white mr-2">⇩</span>Export JSON
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <header class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-800 pb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white tracking-tight">OPERATIONAL STATUS</h1>
+        <div class="mt-2 flex items-center gap-4 text-sm font-mono text-zinc-500">
+           <span id="asOf">DATE: —</span>
+           <span id="savedBadge" class="text-zinc-600">SYNC: —</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 font-mono">
+      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-hud">
+        <p class="text-xs text-zinc-500 uppercase tracking-widest">Target (Phase 1)</p>
+        <p id="kpiTarget" class="text-xl font-bold mt-2 text-white">—</p>
+      </div>
+
+      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-success">
+        <p class="text-xs text-zinc-500 uppercase tracking-widest">Capital Raised</p>
+        <p id="kpiRaised" class="text-xl font-bold mt-2 text-white">—</p>
+        <p id="kpiRaisedNote" class="text-[10px] mt-1 text-zinc-500">—</p>
+      </div>
+
+      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-purple-600">
+        <p class="text-xs text-zinc-500 uppercase tracking-widest">Est. Runway</p>
+        <p id="kpiRunway" class="text-xl font-bold mt-2 text-white">—</p>
+        <p id="kpiRunwayNote" class="text-[10px] mt-1 text-zinc-500"></p>
+      </div>
+
+      <div class="bg-panel p-5 border border-zinc-800 border-l-4 border-l-zinc-500">
+        <p class="text-xs text-zinc-500 uppercase tracking-widest">Current Phase</p>
+        <p id="kpiPhase" class="text-xl font-bold mt-2 text-white truncate">—</p>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+      <div class="bg-panel border border-zinc-800 lg:col-span-1">
+        <div class="p-4 border-b border-zinc-800 flex justify-between items-center">
+            <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wider">Asset/Ops State</h2>
+            <span id="badgeConfirmed" class="text-[10px] font-mono px-2 py-1 bg-zinc-900 border border-zinc-700 text-zinc-400">—</span>
+        </div>
+        
+        <div class="p-6 space-y-6">
+          <div>
+            <p class="text-[10px] font-mono text-hud uppercase tracking-widest mb-1">Ops Status</p>
+            <p id="opsStatus" class="text-sm font-semibold text-gray-300">—</p>
+          </div>
+
+          <div>
+            <p class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2">Deployed Assets</p>
+            <ul id="assetsList" class="space-y-1 text-sm text-gray-400 font-mono"></ul>
+          </div>
+          
+          <div>
+             <p class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2">Pending Milestones</p>
+             <ol id="milestoneList" class="space-y-2 text-sm text-gray-400 font-mono list-decimal list-inside accent-hud"></ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-panel border border-zinc-800 lg:col-span-1 flex flex-col">
+        <div class="p-4 border-b border-zinc-800">
+            <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wider">Gap Analysis</h2>
+        </div>
+        
+        <div class="relative flex-grow flex items-center justify-center p-6">
+          <canvas id="fundingChart" style="max-height: 220px;"></canvas>
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span class="text-xs font-mono text-zinc-600 mt-20">CAPITAL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-panel border border-zinc-800 lg:col-span-1">
+        <div class="p-4 border-b border-zinc-800 flex items-center gap-2">
+            <div class="w-2 h-2 bg-hud rounded-sm"></div>
+            <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wider">Revenue Sim</h2>
+        </div>
+        
+        <div class="p-6 space-y-5">
+            <p class="text-xs text-zinc-500">Bootstrap Parameter Calculator</p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-mono text-zinc-500 mb-1 uppercase">Day Rate ($)</label>
+                    <input type="number" id="calcRate" value="1200" class="w-full p-2 text-sm bg-black border border-zinc-700 focus:border-hud text-right">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono text-zinc-500 mb-1 uppercase">Jobs/Mo</label>
+                    <input type="number" id="calcJobs" value="4" class="w-full p-2 text-sm bg-black border border-zinc-700 focus:border-hud text-right">
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t border-zinc-800 space-y-2">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-zinc-400 font-mono">GROSS REV:</span>
+                    <span id="calcMonthly" class="text-sm font-bold text-success font-mono">$0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-zinc-400 font-mono">TARGET MET IN:</span>
+                    <span id="calcTime" class="text-sm font-bold text-hud font-mono">0 MO</span>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="bg-panel border border-zinc-800 p-0 overflow-hidden">
+      <div class="bg-zinc-900 px-4 py-2 border-b border-zinc-800 flex justify-between items-center">
+          <h2 class="text-xs font-bold text-gray-400 font-mono uppercase">System_State.json</h2>
+          <span class="text-[10px] text-zinc-600 font-mono">RW_ACCESS_GRANTED</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-6">
+        <div class="lg:col-span-4 border-r border-zinc-800">
+          <textarea id="stateEditor"
+            class="w-full h-64 font-mono text-xs p-4 bg-vanta text-green-500 border-none resize-none focus:ring-0"></textarea>
+        </div>
+        <div class="lg:col-span-2 p-6 flex flex-col gap-3 justify-center bg-panel">
+          <button id="btnApply"
+            class="w-full bg-hud hover:bg-blue-600 text-black px-4 py-3 text-xs font-bold font-mono uppercase tracking-widest shadow-lg shadow-blue-900/20 transition">
+            [ EXECUTE UPDATE ]
+          </button>
+          <button id="btnReset"
+            class="w-full bg-transparent hover:bg-red-900/20 text-zinc-500 hover:text-red-400 border border-zinc-700 hover:border-red-800 px-4 py-3 text-xs font-mono uppercase tracking-widest transition">
+            [ FACTORY RESET ]
+          </button>
+          <div id="errBox"
+            class="hidden p-2 mt-2 border border-red-900 bg-red-900/10 text-red-500 text-[10px] font-mono"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = "ifh_mission_control_state_v2";
+
+    const DEFAULT_STATE = {
+      version: "v2",
+      as_of: new Date().toISOString().slice(0, 10),
+      phase: "Pre-Seed / Setup",
+      funding_target: 60000,
+      capital_raised: 0,
+      capital_confirmed: false,
+      runway_months: null,
+      assets_owned: ["Nikon Z7"],
+      operations_status: "Pre-revenue",
+      next_milestones: [
+        "Launch website",
+        "Complete Part 107",
+        "Acquire first drone",
+        "Secure insurance"
+      ]
+    };
+
+    const fmtUSD = (n) => {
+      if (typeof n !== "number" || !Number.isFinite(n)) return "—";
+      return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    };
+
+    function normalizeState(raw) {
+      const s = (raw && typeof raw === "object") ? raw : {};
+      return {
+        version: s.version || "v2",
+        as_of: s.as_of || "",
+        phase: s.phase || "—",
+        funding_target: Number(s.funding_target) || 0,
+        capital_raised: Number(s.capital_raised) || 0,
+        capital_confirmed: s.capital_confirmed === true,
+        runway_months: s.runway_months,
+        assets_owned: Array.isArray(s.assets_owned) ? s.assets_owned : [],
+        operations_status: s.operations_status || "—",
+        next_milestones: Array.isArray(s.next_milestones) ? s.next_milestones : []
+      };
+    }
+
+    function saveState(state) {
+      const normalized = normalizeState(state);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      setSavedBadge(true);
+      return normalized;
+    }
+
+    function loadSavedState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      try { return normalizeState(JSON.parse(raw)); }
+      catch { return null; }
+    }
+
+    function setSavedBadge(isSaved) {
+      const b = document.getElementById("savedBadge");
+      if (isSaved) {
+        b.textContent = "SYNC: OK";
+        b.className = "text-emerald-500 font-mono";
+      } else {
+        b.textContent = "SYNC: PENDING";
+        b.className = "text-zinc-600 font-mono";
+      }
+    }
+
+    let fundingChartInstance = null;
+
+    function render(state) {
+      state = normalizeState(state);
+
+      document.getElementById("asOf").textContent = state.as_of ? `DATE: ${state.as_of}` : "DATE: —";
+      document.getElementById("kpiTarget").textContent = fmtUSD(state.funding_target);
+      document.getElementById("kpiRaised").textContent = fmtUSD(state.capital_raised);
+      document.getElementById("kpiPhase").textContent = state.phase;
+      document.getElementById("opsStatus").textContent = state.operations_status;
+      
+      const raisedNote = document.getElementById("kpiRaisedNote");
+      if (!state.capital_confirmed && state.capital_raised === 0) {
+        raisedNote.textContent = "PENDING CONFIRMATION";
+        raisedNote.className = "text-[10px] mt-1 text-zinc-600";
+      } else if (state.capital_confirmed) {
+        const pct = Math.round((state.capital_raised / state.funding_target) * 100);
+        raisedNote.textContent = `${pct}% ACQUIRED`;
+        raisedNote.className = "text-[10px] mt-1 text-success font-bold";
+      }
+
+      const runwayEl = document.getElementById("kpiRunway");
+      const runwayNoteEl = document.getElementById("kpiRunwayNote");
+      if (state.runway_months !== null && state.runway_months !== undefined) {
+         runwayEl.textContent = state.runway_months;
+         runwayNoteEl.textContent = "MONTHS REMAINING";
+      } else {
+         runwayEl.textContent = "—";
+         runwayNoteEl.textContent = "AWAITING CAPITAL";
+      }
+
+      const badge = document.getElementById("badgeConfirmed");
+      if (state.capital_confirmed) {
+        badge.textContent = "CAPITAL SECURED";
+        badge.className = "text-[10px] font-mono px-2 py-1 bg-green-900/30 border border-green-800 text-green-400";
+      } else {
+        badge.textContent = "UNCONFIRMED";
+        badge.className = "text-[10px] font-mono px-2 py-1 bg-yellow-900/20 border border-yellow-800 text-yellow-600";
+      }
+
+      const assetsList = document.getElementById("assetsList");
+      assetsList.innerHTML = state.assets_owned.map(a => `<li>> ${a}</li>`).join("");
+      
+      const milestoneList = document.getElementById("milestoneList");
+      milestoneList.innerHTML = state.next_milestones.map(m => `<li>${m}</li>`).join("");
+
+      renderChart(state);
+    }
+
+    function renderChart(state) {
+      const ctx = document.getElementById("fundingChart").getContext("2d");
+      const remaining = Math.max(0, state.funding_target - state.capital_raised);
+      
+      // DARK MODE CHART COLORS
+      const data = {
+        labels: ["Raised", "Needed"],
+        datasets: [{
+          data: [state.capital_raised, remaining],
+          backgroundColor: ["#10b981", "#1f2937"], // Success Green vs Zinc-800
+          borderColor: ["#050505", "#050505"], 
+          borderWidth: 2,
+          hoverOffset: 4
+        }]
+      };
+
+      if (fundingChartInstance) {
+        fundingChartInstance.data = data;
+        fundingChartInstance.update();
+      } else {
+        fundingChartInstance = new Chart(ctx, {
+          type: "doughnut",
+          data: data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '80%', 
+            plugins: {
+              legend: { display: false } 
+            }
+          }
+        });
+      }
+    }
+
+    function updateCalculator(targetAmount) {
+        const rate = parseFloat(document.getElementById("calcRate").value) || 0;
+        const jobs = parseFloat(document.getElementById("calcJobs").value) || 0;
+        
+        const monthly = rate * jobs;
+        document.getElementById("calcMonthly").textContent = fmtUSD(monthly);
+        
+        const timeEl = document.getElementById("calcTime");
+        if (monthly > 0) {
+            const months = (targetAmount / monthly).toFixed(1);
+            timeEl.textContent = `${months} MO`;
+        } else {
+            timeEl.textContent = "∞";
+        }
+    }
+
+    const editor = document.getElementById("stateEditor");
+    const errBox = document.getElementById("errBox");
+
+    let currentState = loadSavedState() || normalizeState(DEFAULT_STATE);
+    editor.value = JSON.stringify(currentState, null, 2);
+    render(currentState);
+    updateCalculator(currentState.funding_target);
+
+    document.getElementById("btnApply").addEventListener("click", () => {
+      try {
+        const parsed = JSON.parse(editor.value);
+        currentState = saveState(parsed);
+        editor.value = JSON.stringify(currentState, null, 2);
+        render(currentState);
+        updateCalculator(currentState.funding_target);
+        errBox.classList.add("hidden");
+      } catch (e) {
+        errBox.textContent = "SYNTAX_ERR: " + e.message;
+        errBox.classList.remove("hidden");
+      }
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      setSavedBadge(false);
+      currentState = normalizeState(DEFAULT_STATE);
+      editor.value = JSON.stringify(currentState, null, 2);
+      render(currentState);
+      updateCalculator(currentState.funding_target);
+    });
+
+    ['calcRate', 'calcJobs'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            updateCalculator(currentState.funding_target);
+        });
+    });
+
+    document.getElementById("btnExport").addEventListener("click", () => {
+        const blob = new Blob([editor.value], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `IFH_CORE_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+
+  </script>
+</body>
+</html>
